@@ -1,0 +1,16 @@
+#!/bin/bash
+# location: .git/hooks/prepare-commit-msg
+# https://gist.github.com/bartoszmajsak/1396344
+
+# This way you can customize which branches should be skipped when
+# prepending commit message.
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+BRANCH_PREFIX=$(echo ${BRANCH_NAME} | cut -d '-' -f 1,2)
+PROJECT_PREFIX=$(echo ${BRANCH_NAME} | cut -d '-' -f 1)
+
+# in case you need to specify prefix for commit that does not match current branch
+PREFIX_IN_COMMIT=$(grep -c "$PROJECT_PREFIX" $1)
+
+if [ -n "$BRANCH_NAME" ] && ! [[ $PREFIX_IN_COMMIT -ge 1 ]]; then
+  sed -i.bak -e "1s/^/$BRANCH_PREFIX /" $1
+fi

@@ -1,0 +1,73 @@
+[user]
+	name = Ivan Kovalkovskyi
+
+[diff]
+  colorMoved = default
+  colorMovedWS = allow-indentation-change
+
+[alias]
+	s = status
+    co = checkout
+	unstage = reset HEAD --
+    br = branch --sort=-committerdate
+
+    # commit history as an ASCII 'tree'
+	tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    # like 'tree', but for all branches
+    graph = tree --branches=*
+	ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%an]" --decorate
+	ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%an]" --decorate --numstat
+
+	filelog = log -u
+	fl = filelog
+
+
+	show-commit-diff = "!f() { git diff "$1"^.."$1"; }; f"
+	list-commit-changes = "!f() { git ll "$1"^.."$1"; }; f"
+	fd = "!git ls-files | grep -i"
+
+    ap   = add --patch
+    anew = add --intent-to-add
+    aall = add --all
+
+    cm= commit --verbose # Edit commit in editor
+    cma = commit --verbose --amend # Amend HEAD
+    amend = commit --amend --no-edit
+    cmm = commit --message # Commit with a short title
+    fixup = commit --fixup # To squash with another commit
+    fixr = "!gitfixr() { git commit --fixup=$1 && git rebase -i --autosquash $1^; }; gitfixr"
+    rbcont = rebase --continue
+    rbabort = rebase --abort
+    pick = cherry-pick -x
+    # push to same branch name in remote/origin
+    pusho = !git push --set-upstream origin $(git branch --show-current)
+    pushf = !git push -f origin $(git branch --show-current)
+
+	list-aliases = "!git config -l | grep alias | cut -c 7- | bat -l ini -p"
+	la = list-aliases
+[blame]
+    coloring = repeatedLines
+[color]
+    ui = auto
+    pager = true
+[grep]
+    lineNumber = true
+[rebase]
+    autosquash = true
+    autoStash = true
+
+[core]
+	autocrlf = false
+	excludesfile = /Users/ikovalkovskyi/.gitignore_global
+
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+
+[oh-my-zsh]
+	hide-dirty = 1
+
+[diff "sopsdiffer"]
+	textconv = sops -d
+[safe]
+	directory = /go/src/github.com/argoproj/argo-cd
+	directory = /go/src/github.com/argoproj/argo-cd

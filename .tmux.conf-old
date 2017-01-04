@@ -1,0 +1,51 @@
+set-option -g default-shell /bin/zsh
+
+# List of plugins (prefix + I to install newly added plugins)
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-copycat'
+set -g @plugin 'tmux-plugins/tmux-yank'
+set -g @plugin 'tmux-plugins/tmux-open'
+
+
+# set $TERM=screen-256color
+# set -g default-terminal "screen-256color"
+source-file ~/.tmux/plugins/powerline/powerline/bindings/tmux/powerline.conf
+
+# remap prefix from 'C-b' to 'C-a'
+unbind C-b
+set-option -g prefix C-a
+
+bind-key C-a send-prefix
+
+# split panes using | and -
+bind | split-window -h
+bind - split-window -v
+unbind '"'
+unbind %
+
+# reload config file (change file location to your the tmux.conf you want to use)
+bind r source-file ~/.tmux.conf
+
+# switch panes using Alt-arrow without prefix
+bind -n M-h select-pane -L
+bind -n M-l select-pane -R
+bind -n M-k select-pane -U
+bind -n M-j select-pane -D
+
+# Enable mouse mode (tmux 2.1 and above)
+set -g mouse on
+# don't rename windows automatically
+set-option -g allow-rename off
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run -b '~/.tmux/plugins/tpm/tpm'
+set -s escape-time 0
+
+set-option -g history-limit 32768
+set -g @shell_mode 'vi'
+bind-key -T copy-mode-vi v send-keys -X begin-selection
+bind-key -T copy-mode-vi r send-keys -X rectangle-toggle
+
+bind e setw synchronize-panes
