@@ -38,48 +38,6 @@ function br() {
   fi
 }
 
-# test environment ssh: Scalr
-
-DEFAULT_TEST_ENV_HOST="test-env.scalr.com"
-TE=$DEFAULT_TEST_ENV_HOST
-LAST_TE_PORT_FILE=~/.test-env-port
-
-te(){
-    if [[ -z "$1" ]] ; then
-        if [[ -f $LAST_TE_PORT_FILE ]] ; then
-            TE_PORT=$(cat $LAST_TE_PORT_FILE)
-            echo "[INFO] Connecting to port: $TE_PORT"
-        else
-            echo "[ERROR] You must specify port number as a first argument!"
-	    return 1
-        fi
-    else
-        TE_PORT=$1
-        echo -n "Do you want to save port $TE_PORT? (y/n):"
-        read answer
-        if [[ "$answer" == "y" ]] ; then
-           echo $TE_PORT > $LAST_TE_PORT_FILE
-               echo "[INFO] Port $TE_PORT successfuly saved!"
-        fi
-    fi
-    shift;
-    set -x
-    ssh -i ~/.ssh/scalr_id_rsa -l root -p $TE_PORT ${2:-$DEFAULT_TEST_ENV_HOST} -t 'bash --rcfile ~/.dark_customrc -i' $@
-    set +x
-}
-
-sync(){
-    TE_PORT=$(cat $LAST_TE_PORT_FILE)
-    FAM_PATH=/opt/scalr-server/embedded/scalr/app/python/fatmouse
-    set -x
-    ssh -q -i ~/.ssh/scalr_id_rsa -l root -p $TE_PORT $DEFAULT_TEST_ENV_HOST mkdir -p $FAM_PATH/$(dirname "$1")
-    rsync --progress -avz -e "ssh -q -i ~/.ssh/scalr_id_rsa -l root -p $TE_PORT" $PWD/${1:-"server/terraform"} $DEFAULT_TEST_ENV_HOST:$FAM_PATH/${1:-"server/terraform"}
-    set +x
-}
-
-
-# Kubernetes functions: Newfire
-
 
 function exec_pod {
     namespace=$1; shift
@@ -92,20 +50,12 @@ function exec_pod {
     kubectl -n $namespace exec -it $pod_name $comm
 }
 
-function ctail {
-	path_=${1-"/opt/scalr-server/var/log/service/tf-*.log"}
-	tail -f $path_ | sed -e 's/\(.*FATAL.*\)/\o033[1;31m\1\o033[0;39m/' -e 's/\(.*ERROR.*\)/\o033[31m\1\o033[39m/' -e 's/\(.*WARNING.*\)/\o033[33m\1\o033[39m/' -e 's/\(.*INFO.*\)/\o033[32m\1\o033[39m/' -e 's/\(.*DEBUG.*\)/\o033[34m\1\o033[39m/' -e 's/\(.*Traceback.*\)/\o033[1;39m\1\o033[0;39m/'
-}
 
 function paste() {
   local file=${1:-/dev/stdin}
   curl --data-binary @${file} https://paste.rs
 }
 
-# mint only
-fix_audio () {
-  rm -rf ~/.config/pulse && pulseaudio -k
-}
 
 function jump_pod () {
     cat <<EOF | kubectl apply -f -
