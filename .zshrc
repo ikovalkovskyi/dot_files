@@ -6,7 +6,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
 # If you come from bash you might have to change your $PATH.
 
@@ -19,6 +18,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 #ZSH_THEME="dracula/dracula"
 ZSH_THEME="powerlevel10k/powerlevel10k"
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#aaaaaa"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -112,6 +112,7 @@ pasteinit() {
 pastefinish() {
   zle -N self-insert $OLD_SELF_INSERT
 }
+
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 ### Fix slowness of pastes
@@ -134,41 +135,26 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 fpath+=${ZDOTDIR:-~}/.zsh_functions
 
-[[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh
-
 . $HOME/.bash_functions
 . $HOME/.bash_aliases
 . $HOME/.env_vars
 
 [[ -s "$HOME/.demonware" ]] && source ~/.demonware
 
-if type op &> /dev/null ; then eval "$(op completion zsh)"; compdef _op op ; fi
-# source /Users/ikovalkovskyi/.docker/init-zsh.sh || true # Added by Docker Desktop
-export CLOUDSDK_PYTHON=python3.9
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/usr/local/lib/google-cloud-sdk/path.zsh.inc' ]; then . '/usr/local/lib/google-cloud-sdk/path.zsh.inc'; fi
+# Add ~/.local/bin to PATH if it exists and isn't already there
+if [[ -d "$HOME/.local/bin" && ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/usr/local/lib/google-cloud-sdk/completion.zsh.inc' ]; then . '/usr/local/lib/google-cloud-sdk/completion.zsh.inc'; fi
-
-[[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh
 . ~/.bash_functions
 . ~/.bash_aliases
 . ~/.env_vars
-
 [[ -s "~/.demonware" ]] && source ~/.demonware
 
-if [ -f '~/.jfrog/jfrog_zsh_completion' ];
-then
-    source ~/.jfrog/jfrog_zsh_completion;
-    autoload -Uz compinit
-    compinit
+if command -v brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    export HOMEBREW_NO_AUTO_UPDATE=1
+    source $(brew --prefix)/etc/bash_completion.d/az
 fi
 
-source /Users/ikovalkovskyi/.docker/init-zsh.sh || true # Added by Docker Desktop
-
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#aaaaaa"
-export HOMEBREW_NO_AUTO_UPDATE=1
 autoload bashcompinit && bashcompinit
-source $(brew --prefix)/etc/bash_completion.d/az
