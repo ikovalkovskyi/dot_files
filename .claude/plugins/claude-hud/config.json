@@ -1,0 +1,23 @@
+{
+  "display": {
+    "showTools": false,
+    "showAgents": true,
+    "showTodos": true,
+    "showDuration": true,
+    "showConfigCounts": false,
+    "showUsage": true,
+    "sevenDayThreshold": 0,
+    "timeFormat": "relative",
+    "showContextBar": false,
+    "usageBarEnabled": false,
+    "usageCompact": false,
+    "showResetLabel": true,
+    "showEffortLevel": true,
+    "showSessionTokens": true,
+    "showPromptCache": true,
+    "contextValue": "both"
+  },
+  "colors": {
+    "usage": "cyan"
+  }
+}
